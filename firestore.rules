@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function logado() { return request.auth != null; }
+
+    function ehAdmin() {
+      return logado()
+        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // ---------- perfis ----------
+    match /usuarios/{uid} {
+      allow read: if logado();
+      // cria o próprio perfil, sempre como "user" (admin só pelo Console do Firebase)
+      allow create: if logado() && request.auth.uid == uid && request.resource.data.role == 'user';
+      // atualiza o próprio perfil, sem mudar o papel
+      allow update: if logado() && request.auth.uid == uid
+                    && request.resource.data.role == resource.data.role;
+      allow delete: if false;
+    }
+
+    // ---------- mural de denúncias ----------
+    match /denuncias/{id} {
+      // mural compartilhado: qualquer usuário logado lê
+      allow read: if logado();
+
+      allow create: if logado()
+        && request.resource.data.autorId == request.auth.uid
+        && request.resource.data.status == 'aberta'
+        && request.resource.data.titulo is string
+        && request.resource.data.titulo.size() > 0 && request.resource.data.titulo.size() <= 120
+        && request.resource.data.tipo in ['agua', 'ar', 'solo', 'outros']
+        && request.resource.data.fotoUrl is string && request.resource.data.fotoUrl.size() > 0
+        && request.resource.data.localTexto is string && request.resource.data.localTexto.size() > 0
+        && request.resource.data.apoiadores.size() == 0
+        && request.resource.data.criadoEm == request.time;
+
+      allow update: if logado() && (
+        // qualquer logado pode apoiar (mexer só em "apoiadores", 1 por vez)
+        ( request.resource.data.diff(resource.data).affectedKeys().hasOnly(['apoiadores'])
+          && request.resource.data.apoiadores.size() <= resource.data.apoiadores.size() + 1 )
+        // admin edita tudo (inclusive status)
+        || ehAdmin()
+        // autor edita, mas não troca autor nem status
+        || ( resource.data.autorId == request.auth.uid
+             && request.resource.data.autorId == resource.data.autorId
+             && request.resource.data.status == resource.data.status )
+      );
+
+      allow delete: if logado() && (ehAdmin() || resource.data.autorId == request.auth.uid);
+    }
+  }
+}

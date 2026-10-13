@@ -1,0 +1,78 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Eco Denúncia</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="sair()">sair</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="pad">
+    <p class="ola">
+      Olá, {{ auth.perfil()?.nome }}
+      @if (auth.isAdmin()) {
+        <span class="badge ok">admin</span>
+      }
+    </p>
+
+    <div class="filtros" role="group" aria-label="Filtrar por tipo">
+      <button type="button" class="chip" [class.on]="svc.filtro() === 'todas'"
+        [attr.aria-pressed]="svc.filtro() === 'todas'" (click)="svc.filtro.set('todas')">
+        Todas {{ svc.totais().total }}
+      </button>
+      @for (t of tipos; track t.valor) {
+        <button type="button" class="chip" [class.on]="svc.filtro() === t.valor"
+          [attr.aria-pressed]="svc.filtro() === t.valor" (click)="svc.filtro.set(t.valor)">
+          {{ t.rotulo }} {{ svc.totais().porTipo[t.valor] }}
+        </button>
+      }
+    </div>
+
+    @if (svc.erro()) {
+      <div class="aviso erro" role="alert">{{ svc.erro() }}</div>
+    }
+
+    @if (svc.carregando()) {
+      <div class="centro"><ion-spinner name="dots"></ion-spinner></div>
+    }
+
+    @for (d of svc.filtradas(); track d.id) {
+      <app-denuncia-card
+        [denuncia]="d"
+        [podeEditar]="svc.podeEditar(d)"
+        [apoiou]="svc.apoiou(d)"
+        (apoiar)="aoApoiar($event)"
+        (editar)="aoEditar($event)"
+        (excluir)="aoExcluir($event)">
+      </app-denuncia-card>
+    }
+
+    <!-- estado vazio -->
+    @if (!svc.carregando() && !svc.erro() && svc.filtradas().length === 0) {
+      <section class="vazio">
+        @if (svc.filtro() === 'todas') {
+          <strong>O mural ainda está vazio</strong>
+        } @else {
+          <strong>Nenhuma denúncia de {{ rotuloFiltro() }}</strong>
+        }
+        <p class="muted">Viu lixo, queimada ou vazamento? Registre com foto e local.</p>
+        <ion-button size="small" fill="outline" (click)="nova()">Nova denúncia</ion-button>
+      </section>
+    }
+
+    @if (svc.totais().total > 0) {
+      <p class="muted resumo">
+        {{ svc.totais().total }} denúncias · {{ svc.totais().semFoto }} sem foto · {{ svc.totais().semLocal }} sem local
+      </p>
+    }
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <div class="rodape">
+      <ion-button expand="block" (click)="nova()">Nova denúncia</ion-button>
+    </div>
+  </ion-toolbar>
+</ion-footer>

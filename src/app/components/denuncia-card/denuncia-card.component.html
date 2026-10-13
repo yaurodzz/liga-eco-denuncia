@@ -1,0 +1,41 @@
+<article class="item">
+  @if (denuncia.fotoUrl) {
+    <img class="thumb" [src]="miniatura" [alt]="'Foto: ' + denuncia.titulo" loading="lazy" />
+  }
+
+  <div class="corpo">
+    <strong>{{ denuncia.titulo }}</strong>
+    <div class="muted">
+      {{ rotuloTipo }} · {{ denuncia.fotoUrl ? 'foto ok' : 'sem foto' }}
+      @if (!denuncia.localTexto) {
+        · sem local
+      }
+    </div>
+    @if (denuncia.localTexto) {
+      <div class="muted local">
+        <ion-icon name="location-outline"></ion-icon> {{ denuncia.localTexto }}
+      </div>
+    }
+    <div class="linha">
+      <span class="badge" [ngClass]="classeStatus">{{ rotuloStatus }}</span>
+      <span class="muted">por {{ denuncia.autorNome }}@if (data) {
+        · {{ data | date: 'dd/MM/yyyy' }}
+      }</span>
+    </div>
+  </div>
+
+  <div class="acoes">
+    <button type="button" class="mais" [class.on]="apoiou" (click)="apoiar.emit(denuncia)"
+      [attr.aria-pressed]="apoiou" aria-label="Apoiar esta denúncia">
+      + <span>{{ totalApoios }}</span>
+    </button>
+    @if (podeEditar) {
+      <button type="button" class="icone" (click)="editar.emit(denuncia)" aria-label="Editar denúncia">
+        <ion-icon name="create-outline"></ion-icon>
+      </button>
+      <button type="button" class="icone perigo" (click)="excluir.emit(denuncia)" aria-label="Excluir denúncia">
+        <ion-icon name="trash-outline"></ion-icon>
+      </button>
+    }
+  </div>
+</article>
