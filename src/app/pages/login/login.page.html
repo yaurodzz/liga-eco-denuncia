@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Eco Denúncia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <main class="login">
+    <h1>Registre problemas ambientais da sua região</h1>
+    <p class="muted">Entre para enviar denúncias com foto e local e acompanhar o mural.</p>
+
+    <ion-segment [value]="modo()" (ionChange)="trocarModo($event.detail.value)" aria-label="Entrar ou criar conta">
+      <ion-segment-button value="entrar"><ion-label>Entrar</ion-label></ion-segment-button>
+      <ion-segment-button value="cadastrar"><ion-label>Criar conta</ion-label></ion-segment-button>
+    </ion-segment>
+
+    <div class="campos">
+      @if (modo() === 'cadastrar') {
+        <ion-input label="Nome" labelPlacement="floating" fill="outline"
+        autocomplete="name" [(ngModel)]="nome"></ion-input>
+      }
+      <ion-input label="E-mail" labelPlacement="floating" fill="outline" type="email"
+      autocomplete="email" [(ngModel)]="email"></ion-input>
+      <ion-input label="Senha" labelPlacement="floating" fill="outline" type="password"
+        [autocomplete]="modo() === 'entrar' ? 'current-password' : 'new-password'"
+      [(ngModel)]="senha" (keyup.enter)="enviar()"></ion-input>
+    </div>
+
+    @if (erro()) {
+      <div class="aviso erro" role="alert">{{ erro() }}</div>
+    }
+
+    <ion-button expand="block" (click)="enviar()" [disabled]="carregando()">
+      @if (carregando()) {
+        <ion-spinner name="dots"></ion-spinner>
+      }
+      @if (!carregando()) {
+        <span>{{ modo() === 'entrar' ? 'Entrar' : 'Criar conta' }}</span>
+      }
+    </ion-button>
+
+    <p class="ou muted">ou</p>
+
+    <ion-button expand="block" fill="outline" (click)="google()" [disabled]="carregando()">
+      <ion-icon slot="start" name="logo-google"></ion-icon>
+      Continuar com Google
+    </ion-button>
+  </main>
+</ion-content>

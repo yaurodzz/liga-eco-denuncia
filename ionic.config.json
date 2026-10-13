@@ -1,0 +1,7 @@
+{
+  "name": "liga-eco-denuncia",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

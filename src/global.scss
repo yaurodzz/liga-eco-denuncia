@@ -1,0 +1,46 @@
+@use "./theme/variables";
+
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* ---- elementos compartilhados (badges e avisos do print) ---- */
+.badge {
+  display: inline-block; font-size: 0.7rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px;
+  &.ok   { background: var(--eco-ok-bg);   color: var(--eco-ok-fg); }
+  &.warn { background: var(--eco-warn-bg); color: var(--eco-warn-fg); }
+  &.bad  { background: var(--eco-bad-bg);  color: var(--eco-bad-fg); }
+  &.off  { background: var(--eco-slate-200); color: var(--eco-slate-500); }
+}
+.aviso {
+  border-radius: 10px; padding: 10px 12px; font-size: 0.85rem; margin: 8px 0; font-weight: 600;
+  &.erro { background: var(--eco-bad-bg);  color: var(--eco-bad-fg); }
+  &.info { background: var(--eco-info-bg); color: var(--eco-info-fg); }
+  &.ok   { background: var(--eco-ok-bg);   color: var(--eco-ok-fg); }
+}
+.muted { color: var(--eco-slate-500); font-size: 0.8rem; }
+.pad { padding: 12px; }
+
+/* chips de filtro / seleção de tipo (print) */
+.chip {
+  display: inline-block; padding: 6px 12px; border-radius: 999px; border: 0; cursor: pointer;
+  background: var(--eco-slate-100); color: var(--ion-text-color);
+  font: inherit; font-size: 0.78rem; font-weight: 600; margin: 0 4px 6px 0;
+  &.on { background: var(--ion-color-primary); color: #fff; }
+  &:focus-visible { outline: 2px solid var(--ion-color-primary); outline-offset: 2px; }
+}
+
+/* botões do Ionic sem CAIXA ALTA (o print usa "sair", "Enviar denúncia"...) */
+ion-button {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 700;
+}

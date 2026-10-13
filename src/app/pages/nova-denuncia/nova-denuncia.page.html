@@ -1,0 +1,113 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Eco Denúncia</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="voltar()">voltar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (carregando()) {
+    <div class="centro"><ion-spinner name="dots"></ion-spinner></div>
+  }
+
+  @if (!carregando()) {
+    <div class="pad form">
+      <h1>{{ id ? 'Editar denúncia' : 'Nova denúncia' }}</h1>
+      <ion-input label="Título" labelPlacement="floating" fill="outline" [maxlength]="120"
+      placeholder="Ex.: Lixo no córrego" [(ngModel)]="titulo"></ion-input>
+      <!-- tipo -->
+      <fieldset class="tipos">
+        <legend class="muted">Tipo do problema</legend>
+        @for (t of tipos; track t.valor) {
+          <button type="button" class="chip"
+            [class.on]="tipo() === t.valor" [attr.aria-pressed]="tipo() === t.valor"
+          (click)="tipo.set(t.valor)">{{ t.rotulo }}</button>
+        }
+      </fieldset>
+      @if (tipo()) {
+        <div class="aviso info">Tipo: {{ rotuloTipo() }}</div>
+      }
+      <ion-textarea label="Descrição (opcional)" labelPlacement="floating" fill="outline"
+        [autoGrow]="true" [rows]="2" [maxlength]="500" [counter]="true"
+      [(ngModel)]="descricao"></ion-textarea>
+      <!-- FOTO -->
+      <div class="item">
+        <div>
+          <strong>Foto</strong>
+          <div class="muted">{{ temFoto() ? (fotoArquivo()?.name || 'foto salva') : 'nenhuma' }}</div>
+        </div>
+        <span class="badge" [class.ok]="temFoto()" [class.bad]="!temFoto()">{{ temFoto() ? 'ok' : 'faltando' }}</span>
+      </div>
+      @if (fotoExibida()) {
+        <img class="previa" [src]="fotoExibida()" alt="Pré-visualização da foto" />
+      }
+      <div class="linha-botoes">
+        <input #arquivo type="file" accept="image/*" hidden (change)="aoEscolherFoto($event)" />
+        <ion-button size="small" fill="outline" (click)="arquivo.click()">
+          {{ temFoto() ? 'Trocar foto' : 'Tirar ou escolher foto' }}
+        </ion-button>
+        @if (temFoto()) {
+          <ion-button size="small" fill="clear" color="danger" (click)="removerFoto()">Remover</ion-button>
+        }
+      </div>
+      <!-- LOCAL -->
+      <div class="item">
+        <div>
+          <strong>Local</strong>
+          <div class="muted">{{ localTexto().trim() || (lat() !== null ? 'ponto marcado no mapa' : 'nenhum') }}</div>
+        </div>
+        <span class="badge" [class.ok]="temLocal()" [class.bad]="!temLocal()">{{ temLocal() ? 'ok' : 'faltando' }}</span>
+      </div>
+      <ion-input label="Endereço ou referência" labelPlacement="floating" fill="outline"
+        placeholder="Ex.: próximo ao ginásio" [(ngModel)]="localTexto"
+      (ionInput)="aoDigitarLocal()"></ion-input>
+      <div class="linha-botoes">
+        <ion-button size="small" fill="outline" (click)="usarMinhaLocalizacao()" [disabled]="obtendoGps()">
+          @if (obtendoGps()) {
+            <ion-spinner name="dots"></ion-spinner>
+          }
+          @if (!obtendoGps()) {
+            <span>Usar minha localização</span>
+          }
+        </ion-button>
+        @if (lat() !== null) {
+          <ion-button size="small" fill="clear" (click)="limparPonto()">Limpar ponto</ion-button>
+        }
+      </div>
+      <app-map-picker [lat]="lat()" [lng]="lng()" (escolhido)="aoEscolherPonto($event)"></app-map-picker>
+      <p class="muted dica">
+        Toque no mapa para marcar o ponto exato; dá para arrastar o pino.
+        @if (buscandoEndereco()) {
+          Buscando endereço…
+        }
+      </p>
+      <!-- STATUS (somente admin, em edição) -->
+      @if (id && auth.isAdmin()) {
+        <ion-select label="Status (admin)" labelPlacement="floating" fill="outline"
+          interface="popover" [(ngModel)]="status">
+          @for (s of statusOpcoes; track s.valor) {
+            <ion-select-option [value]="s.valor">{{ s.rotulo }}</ion-select-option>
+          }
+        </ion-select>
+      }
+      <!-- REGRA: envio bloqueado -->
+      @if (!validacao().ok) {
+        <div class="aviso erro" role="alert">{{ validacao().mensagem }}</div>
+      }
+      @if (erroEnvio()) {
+        <div class="aviso erro" role="alert">{{ erroEnvio() }}</div>
+      }
+      <ion-button expand="block" class="enviar" [class.bloqueado]="!validacao().ok"
+        [disabled]="!validacao().ok || enviando()" (click)="enviar()">
+        @if (enviando()) {
+          <ion-spinner name="dots"></ion-spinner>
+        }
+        @if (!enviando()) {
+          <span>{{ id ? 'Salvar alterações' : 'Enviar denúncia' }}</span>
+        }
+      </ion-button>
+    </div>
+  }
+</ion-content>

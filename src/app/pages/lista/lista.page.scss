@@ -1,0 +1,11 @@
+ion-content { --background: #ffffff; }
+.ola { margin: 0 0 10px; font-weight: 600; font-size: 0.9rem; display: flex; gap: 8px; align-items: center; }
+.filtros { margin-bottom: 8px; }
+.centro { display: flex; justify-content: center; padding: 24px 0; }
+.vazio {
+  text-align: center; padding: 28px 12px; border: 1px dashed var(--eco-slate-200); border-radius: 12px;
+  strong { display: block; margin-bottom: 4px; }
+  p { margin: 0 0 12px; }
+}
+.resumo { text-align: center; margin: 12px 0 0; }
+.rodape { padding: 8px 12px; }

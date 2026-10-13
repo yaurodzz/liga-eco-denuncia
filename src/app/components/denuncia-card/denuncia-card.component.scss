@@ -1,0 +1,32 @@
+.item {
+  background: var(--eco-slate-50);
+  border: 1px solid var(--eco-slate-200);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.thumb { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; flex: none; background: var(--eco-slate-200); }
+.corpo { flex: 1; min-width: 0; strong { font-size: 0.92rem; display: block; } }
+.muted { color: var(--eco-slate-500); font-size: 0.8rem; }
+.local { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; ion-icon { vertical-align: -2px; } }
+.linha { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+
+.acoes { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex: none; }
+
+/* o "+" do print */
+.mais {
+  border: 0; cursor: pointer; font-weight: 700; font-size: 0.8rem;
+  padding: 4px 10px; border-radius: 999px; min-width: 44px; min-height: 28px;
+  background: var(--eco-ok-bg); color: var(--eco-ok-fg);
+  &.on { background: var(--ion-color-primary); color: #fff; }
+  &:focus-visible { outline: 2px solid var(--ion-color-primary); outline-offset: 2px; }
+}
+.icone {
+  border: 0; background: transparent; cursor: pointer; color: var(--eco-slate-600);
+  font-size: 1.15rem; padding: 4px; min-width: 32px; min-height: 32px; border-radius: 8px;
+  &.perigo { color: var(--eco-bad-fg); }
+  &:focus-visible { outline: 2px solid var(--ion-color-primary); }
+}
